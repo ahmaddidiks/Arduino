@@ -8,11 +8,21 @@
 String txData;
 String rxData;
 
+typedef struct
+{
+  uint16_t posTarget[6];
+  uint16_t sensorFeedback[6];
+} Data_t;
+
+Data_t data;
+
 void uartTask(void *pvParameters)
 {
   daisy.begin(115200);
   String buffer;
   char chunk;
+  byte marker;
+
   
   uint16_t counter = 0;
 
@@ -20,23 +30,43 @@ void uartTask(void *pvParameters)
   {
     #if BOARD_ID==0
     counter++;
-    txData = String(counter);
-    daisy.println(txData);
-    Serial.println(txData);
-    delay(1000);
+    if (counter == 99) counter = 0;
+
+    for (byte i = 0; i < 6; i++) 
+    {
+      data.posTarget[i] = i*100 + counter;
+      Serial.print(data.posTarget[i]);
+      Serial.print(" | ");
+    }
+    Serial.println("");
+    daisy.write(255);
+    daisy.write( (byte*)&data, sizeof data );
+    delay(50);
 
     #else
+    marker = 0;
     while (daisy.available())
     {
-      buffer = daisy.readString();
-      if (daisy.available()) chunk = daisy.read(); // just for clearing buffer
+      marker = daisy.read();
+      if (marker = 255)
+      {
+        daisy.readBytes((byte *)&data, sizeof data); // grab the data
+        delay(1);
 
-      rxData = buffer;
-      txData = rxData;
+        data.sensorFeedback[BOARD_ID-1] = random(255); // update data
+        daisy.write(255);
+        daisy.write((byte*)&data, sizeof data);
+        
+        // show the data
+        for (byte i = 0; i < 6; i++) 
+        {
+          Serial.print(data.posTarget[i]);
+          Serial.print(" | ");
+        }
+        Serial.println("");
+      }
       
-      delay(1);
-      daisy.println(txData);
-      Serial.println(txData);
+      if (daisy.available()) chunk = daisy.read(); // just for clearing buffer
     }
     delay(10);
     #endif
