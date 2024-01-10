@@ -3,6 +3,14 @@
 #define ACTIVATE_PIN 4
 #define RX2_PIN 16
 #define TX2_PIN 17
+#define HEADER 255
+
+typedef struct
+{
+  uint16_t sensor[5];
+} Data_t;
+
+Data_t sensorData;
 
 void setup(void)
 {
@@ -14,9 +22,24 @@ void setup(void)
 void loop()
 {
   digitalWrite(ACTIVATE_PIN, LOW);
-  Serial.println("Test");
-  Serial2.println("Test");
-  delay(1000);
+  if (Serial2.available())
+  {
+    byte header = Serial2.read();
+    if (header==HEADER)
+    {
+       Serial2.readBytes((byte*)&sensorData, sizeof sensorData);
+
+      for(byte i=0; i<5; i++)
+      {
+        Serial.print(sensorData.sensor[i]);
+        Serial.print(" | ");
+      }
+      Serial.println();
+    }
+    while (Serial2.available()) char chunk = Serial2.read();
+   
+  }
+  delay(10);
 }
 
 
