@@ -25,6 +25,7 @@ void loop()
   if (Serial2.available())
   {
     byte header = Serial2.read();
+    Serial.println(header);
     if (header==HEADER)
     {
        Serial2.readBytes((byte*)&sensorData, sizeof sensorData);
@@ -38,11 +39,11 @@ void loop()
     }
     while (Serial2.available()) char chunk = Serial2.read();
 
-    delay(1);
-    digitalWrite(ACTIVATE_PIN, HIGH);
-    Serial2.write(HEADER);
-    Serial2.write((byte*)&sensorData, sizeof sensorData);
-    delayMicroseconds(120);
+    // delay(1);
+    // digitalWrite(ACTIVATE_PIN, HIGH);
+    // Serial2.write(HEADER);
+    // Serial2.write((byte*)&sensorData, sizeof sensorData);
+    // delayMicroseconds(120);
   }
   delay(10);
 }
