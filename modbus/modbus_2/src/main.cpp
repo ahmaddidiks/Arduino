@@ -1,6 +1,6 @@
 #include <Arduino.h>
 
-#define ACTIVATE_PIN 4
+#define ACTIVATE_PIN 5
 #define RX2_PIN 16
 #define TX2_PIN 17
 #define HEADER 255
@@ -37,35 +37,12 @@ void loop()
       Serial.println();
     }
     while (Serial2.available()) char chunk = Serial2.read();
-   
+
+    delay(1);
+    digitalWrite(ACTIVATE_PIN, HIGH);
+    Serial2.write(HEADER);
+    Serial2.write((byte*)&sensorData, sizeof sensorData);
+    delayMicroseconds(120);
   }
   delay(10);
 }
-
-
-
-////////////////////////////////////
-
-// #define RX2_PIN 16
-// #define TX2_PIN 17
-
-// void setup(void)
-// {
-//   pinMode(5, OUTPUT);
-//   pinMode(18, OUTPUT);
-//   Serial.begin(9600);
-//   Serial2.begin(9600, SERIAL_8N1, RX2_PIN, TX2_PIN);
-// }
-
-// void loop()
-// {
-//   digitalWrite(5, LOW);
-//   pinMode(18, OUTPUT);
-//   if (Serial2.available())
-//   {
-//     char x = Serial.read();
-//     Serial.print(x);
-//     Serial.print(" ");
-//   }
-//   delay(10);
-// }
