@@ -38,12 +38,6 @@ void loop()
       Serial.println();
     }
     while (Serial2.available()) char chunk = Serial2.read();
-
-    // delay(1);
-    // digitalWrite(ACTIVATE_PIN, HIGH);
-    // Serial2.write(HEADER);
-    // Serial2.write((byte*)&sensorData, sizeof sensorData);
-    // delayMicroseconds(120);
   }
   delay(10);
 }
