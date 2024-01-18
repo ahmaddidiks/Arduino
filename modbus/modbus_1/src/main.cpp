@@ -25,11 +25,34 @@ void loop()
   node.setTransmitBuffer(1, highWord(i));
 
   result = node.readInputRegisters(0, 1);
-  
   // do something with data if read is successful
   if (result == node.ku8MBSuccess)
   {
     data = node.getResponseBuffer(0);
-    Serial.println(data);
+    Serial.printf("input: %d |", data);
+  }
+
+  result = node.readHoldingRegisters(0, 1);
+  // do something with data if read is successful
+  if (result == node.ku8MBSuccess)
+  {
+    data = node.getResponseBuffer(0);
+    Serial.printf(" | holding 1: %d", data);
+  }
+
+  //  result = node.readHoldingRegisters(3, 1);
+  // // do something with data if read is successful
+  // if (result == node.ku8MBSuccess)
+  // {
+  //   data = node.getResponseBuffer(0);
+  //   Serial.printf(" | holding 3: %d", data);
+  // }
+
+  result = node.readDiscreteInputs(0, 1);
+  // do something with data if read is successful
+  if (result == node.ku8MBSuccess)
+  {
+    data = node.getResponseBuffer(0);
+    Serial.printf(" | status: %d\n", data);
   }
 }
