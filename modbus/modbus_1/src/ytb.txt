@@ -1,0 +1,25 @@
+#include <Arduino.h>
+#include "ModbusRTUMaster.h"
+
+#define MAX485_ACT  15
+
+ModbusRTUMaster master(Serial2);
+uint16_t holdingResgiter[4];
+bool coilStatus[4];
+uint16_t counter = 0;
+
+void setup(void)
+{
+  Serial.begin(9600, SERIAL_8N1);
+  master.begin(9600, SERIAL_8N1, 16, 17);
+}
+
+void loop()
+{
+  delay(500);
+
+  counter++;
+  bool succeed = master.writeSingleHoldingRegister(1, 1, counter);
+  Serial.print(succeed); Serial.print(" | ");
+  Serial.println(counter);
+}

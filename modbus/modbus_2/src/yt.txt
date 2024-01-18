@@ -1,0 +1,35 @@
+#include <Arduino.h>
+#include <ModbusRTU.h>
+
+#define SLAVE_ID 1
+ModbusRTU mb;
+bool cb(Modbus::ResultCode event, uint16_t transactionID, void* data) {}
+uint16_t res[5];
+
+void setup()
+{
+  Serial.begin(9600);
+  Serial2.begin(9600, SERIAL_8N1, 16, 17);
+  pinMode(5, OUTPUT);
+  mb.begin(&Serial2, 5);
+  digitalWrite(5, HIGH);
+}
+
+{
+  uint16_t kirima_data = random(0, 200);
+  for (byte i=0; i<5;i++){
+    if (!mb.slave()) {
+      mb.writeHreg(1, i, &kirima_data, 1 cb);
+    }
+  }
+  if (!mb.slave()) {
+    mb.readHreg(1, 5, res, 5, cb);
+     while(mb.slave()) {
+      mb.task();
+     }
+  }
+  for (byte i=0; i<5; i++) {
+    Serial.print(res[i]);
+  }
+  Serial.println();
+}
